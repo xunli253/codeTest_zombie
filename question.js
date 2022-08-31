@@ -14,7 +14,7 @@ let result = {
     "creature": []
 }
 let newZombie = []
-
+/*------------------------------------------------Question Input------------------------------------------------------*/
 
 const question = [{
     type: "input",
@@ -130,8 +130,7 @@ function winClose() {
     }
 }
 
-
-
+/*-------------------------------------------------Zombie Program function-----------------------------------------------------------*/
 
 function zombiesPosition(grid, zombie, moves) {
     if (isInteger(grid) && isZombie(zombie, grid) && isMoves(moves)) {
