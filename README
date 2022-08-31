@@ -1,0 +1,27 @@
+# zombie
+
+
+
+## Installation
+
+Install yarn with npm
+
+```bash
+  npm install --save inquirer@^8.0.0
+```
+    
+## Running Tests
+
+```bash
+  cd codeTest
+  node question.js
+```
+
+
+## Usage/Examples
+
+Input all required information. The result will appear in terminal.
+
+
+
+
