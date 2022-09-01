@@ -1,11 +1,10 @@
 const inquirer = require("inquirer");
 const {
-    isInteger, isZombie, isMoves
+    isInteger, isZombie, isCreatures
 } = require('./condition')
 let nextCreature = false
 let nextRoute = true
 let creaturePosition = []
-let programEnd = false
 let routes = []
 let grid = 0
 let zombie = []
@@ -31,11 +30,6 @@ const question = [{
     message: "please input zombie Y-position",
     name: "Y-Zombie",
     default: 2
-}, {
-    type: "confirm",
-    message: "The program finish",
-    name: "status",
-    default: true
 }
 
 
@@ -104,8 +98,8 @@ function gridAndZombie() {
         grid = Number(data['Grid'])
         zombie[0] = Number(data['X-Zombie'])
         zombie[1] = Number(data['Y-Zombie'])
-        programEnd = data['status']
-        winClose()
+        newZombie.push(zombie)
+        programClose()
     })
 }
 
@@ -118,12 +112,8 @@ function winClose() {
         if (nextRoute) {
             roundStartRoute()
         } else {
-            if (!programEnd) {
-                gridAndZombie()
-            } else {
-                newZombie.push(zombie)
-                programClose()
-            }
+
+            gridAndZombie()
 
 
         }
@@ -133,108 +123,113 @@ function winClose() {
 /*-------------------------------------------------Zombie Program function-----------------------------------------------------------*/
 
 function zombiesPosition(grid, zombie, moves) {
-    if (isInteger(grid) && isZombie(zombie, grid) && isMoves(moves)) {
 
-        let route = []
-        route[0] = zombie[0]
-        route[1] = zombie[1]
-        moves.forEach(move => {
-            if (move === 'L') {
+    let route = []
+    route[0] = zombie[0]
+    route[1] = zombie[1]
+    let moveTable = {
+        L: {
+            action() {
                 route[0] = route[0] - 1
-
-
-            }
-
-            if (move === 'R') {
-                route[0] = route[0] + 1
-
-
-
-            }
-
-            if (move === 'U') {
-                route[1] = route[1] - 1
-
-
-            }
-
-            if (move === 'D') {
-                route[1] = route[1] + 1
-
-            }
-
-
-            if (route[0] < 0) {
-                route[0] = route[0] + grid;
-            }
-
-
-            if (route[0] >= grid) {
-                route[0] = route[0] - grid;
-
-            }
-
-            if (route[1] < 0) {
-                route[1] = route[1] + grid;
-            }
-
-
-            if (route[1] >= grid) {
-                route[1] = route[1] - grid;
-            }
-
-
-            for (let i = 0; i < creaturePosition.length; i++) {
-                if (creaturePosition[i]) {
-
-                    if (route[0] === creaturePosition[i][0] && route[1] === creaturePosition[i][1]) {
-                        delete (creaturePosition[i])
-                        const add = [route[0], route[1]]
-                        newZombie.push(add)
-
-                        break
-                    }
-
-
+                if (route[0] < 0) {
+                    route[0] = route[0] + grid;
+                }
+                if (route[0] >= grid) {
+                    route[0] = route[0] - grid;
 
                 }
+            }
+        },
+        R: {
+            action() {
+                route[0] = route[0] + 1
+                if (route[0] < 0) {
+                    route[0] = route[0] + grid;
+                }
+                if (route[0] >= grid) {
+                    route[0] = route[0] - grid;
+
+                }
+            }
+        },
+        U: {
+            action() {
+                route[1] = route[1] - 1
+                if (route[1] < 0) {
+                    route[1] = route[1] + grid;
+                }
+
+
+                if (route[1] >= grid) {
+                    route[1] = route[1] - grid;
+                }
+            }
+        },
+        D: {
+            action() {
+                route[1] = route[1] + 1
+                if (route[1] < 0) {
+                    route[1] = route[1] + grid;
+                }
+
+
+                if (route[1] >= grid) {
+                    route[1] = route[1] - grid;
+                }
+            }
+        }
+    }
+    moves.forEach(move => {
+        moveTable[move].action()
+        for (let i = 0; i < creaturePosition.length; i++) {
+            if (creaturePosition[i]) {
+
+                if (route[0] === creaturePosition[i][0] && route[1] === creaturePosition[i][1]) {
+                    delete (creaturePosition[i])
+                    const add = [route[0], route[1]]
+                    newZombie.push(add)
+                    break
+                }
+
+
 
             }
 
-        })
+        }
 
-        result.zombie.push(route)
+    })
 
-
-
-
-    } else {
-        console.log("Please input correct value")
+    result.zombie.push(route)
 
 
-    }
+
+
+
 
 }
 
 function programClose() {
 
+    if (isCreatures(creaturePosition, grid, zombie) && isInteger(grid) && isZombie(zombie, grid)) {
+        while (newZombie.length > 0) {
+            zombiesPosition(grid, newZombie[0], routes)
+            newZombie.shift()
+            if (newZombie.length === 0) {
+                for (let i = 0; i < creaturePosition.length; i++) {
+                    if (creaturePosition[i]) {
+                        result.creature.push(creaturePosition[i])
+                    }
 
-    while (newZombie.length > 0) {
-        zombiesPosition(grid, newZombie[0], routes)
-        newZombie.shift()
-        if (newZombie.length === 0) {
-            for (let i = 0; i < creaturePosition.length; i++) {
-                if (creaturePosition[i]) {
-                    result.creature.push(creaturePosition[i])
+
                 }
-
-
+                console.log(result)
             }
-            console.log(result)
         }
-
-
     }
+    else {
+        console.log("please input correct value")
+    }
+
 
 
 }

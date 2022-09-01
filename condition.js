@@ -1,49 +1,33 @@
 /**  Check if the entered number is valid*/
 
 /** check if the number is integer */
-function isInteger(obj) {
-    return obj % 1 === 0 && obj >= 0
+function isInteger(num) {
+    return num % 1 === 0 && num >= 0
 }
 
 
 /** check if the zombie have valid position */
-function isZombie(obj1, obj2) {
-    return obj1.length === 2 && isInteger(obj1[0]) && isInteger(obj1[1]) && obj1[0] < obj2 && obj1[1] < obj2
+function isZombie(zombie, grid) {
+    return zombie.length === 2 && isInteger(zombie[0]) && isInteger(zombie[1]) && zombie[0] < grid && zombie[1] < grid
 }
 
 
-/** check if the move is valid */
-function isMoves(pros) {
-    let status = true
-    if (pros && pros.length > 0) {
-        for (let i = 0; i < pros.length; i++) {
-            if (pros[i] === 'R' || pros[i] === 'L' || pros[i] === 'U' || pros[i] === 'D') {
-                status = true
 
-            } else {
-                status = false
-                break
-            }
-
-        }
-    }
-    return status
-}
 
 
 /**check if the creatures have valid positions */
-function isCreatures(obj1, obj2, obj3) {
+function isCreatures(creatures, grid, initialZombie) {
     let status = true
-    let array = obj1.sort()
-    for (let i = 0; i < obj1.length; i++) {
+    let array = creatures.sort()
+    for (let i = 0; i < creatures.length; i++) {
 
-        if (!isZombie(obj1[i], obj2) || (obj1[i][0] === obj3[0] && obj1[i][1] === obj3[1])) {
+        if (!isZombie(creatures[i], grid) || (creatures[i][0] === initialZombie[0] && creatures[i][1] === initialZombie[1])) {
 
             status = false
             break
 
 
-        } if (i < obj1.length - 1) {
+        } if (i < creatures.length - 1) {
             if (array[i][0] === array[i + 1][0] && array[i][1] === array[i + 1][1]) {
                 status = false
                 break
@@ -55,4 +39,4 @@ function isCreatures(obj1, obj2, obj3) {
     return status
 }
 
-module.exports = { isInteger, isZombie, isMoves, isCreatures }
+module.exports = { isInteger, isZombie, isCreatures }
